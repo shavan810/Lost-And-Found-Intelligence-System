@@ -13,19 +13,20 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        { email, password }
-      );
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
 
-      // Save token
+      // save token
       localStorage.setItem("token", res.data.token);
+
+      // save userId
+      localStorage.setItem("userId", res.data.user._id);
 
       alert("Login Successful ✅");
 
-      // redirect
       navigate("/dashboard");
-
     } catch (err) {
       alert("Login Failed ❌");
       console.log(err.response?.data || err.message);
@@ -34,9 +35,7 @@ function Login() {
 
   return (
     <div className="min-h-[80vh] mt-[50px] bg-linear-to-r from-[#B8DD8B] to-[#56A198] flex items-center justify-center">
-
       <div className="max-w-6xl w-full grid md:grid-cols-2 gap-8 p-6">
-
         {/* LEFT IMAGE */}
         <div className="relative rounded-xl overflow-hidden shadow-lg">
           <img src={bgImg} alt="Login" className="w-full h-full object-cover" />
@@ -49,9 +48,7 @@ function Login() {
               <p className="text-sm leading-relaxed">
                 We help you recover lost items quickly and securely.
               </p>
-              <p className="mt-3 text-xs italic">
-                Happy searching!
-              </p>
+              <p className="mt-3 text-xs italic">Happy searching!</p>
             </div>
           </div>
         </div>
@@ -117,10 +114,8 @@ function Login() {
                 Forgot Password?
               </Link>
             </div>
-
           </form>
         </div>
-
       </div>
     </div>
   );

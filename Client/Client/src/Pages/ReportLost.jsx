@@ -1,160 +1,186 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 function ReportLost() {
+
   const [formData, setFormData] = useState({
     name: "",
     item: "",
     location: "",
     date: "",
     description: "",
-    photo: null,
+    photo: null
   });
 
+  // handle input change
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
     setFormData({
       ...formData,
-      [name]: files ? files[0] : value,
+      [name]: files ? files[0] : value
     });
   };
 
-  const handleSubmit = (e) => {
+  // submit form
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    alert("Lost Item Reported!");
+
+    try {
+
+      const userId = localStorage.getItem("userId");
+
+      const response = await fetch("http://localhost:5000/api/lost/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ...formData,
+          userId: userId
+        })
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+      alert("Lost Item Reported!");
+
+      // reset form
+      setFormData({
+        name: "",
+        item: "",
+        location: "",
+        date: "",
+        description: "",
+        photo: null
+      });
+
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
     <>
-         <nav className="bg-white/80 backdrop-blur-md shadow flex justify-between items-center px-8 py-2 fixed w-full top-0 z-50">
-            
-                    {/* Logo */}
-                    <div className="flex items-center gap-2 font-bold text-lg">
-                      🔍 Digital Lost & Found System
-                    </div>
-            
-                    {/* Menu */}
-                    <ul className="flex gap-6 text-sm font-semibold">
-                      <Link to="/dashboard" className="bg-green-200 px-3 py-1 rounded">Home</Link>
-                      <Link to="/lost">Lost</Link>
-                      <Link to="/report-lost">Report Lost</Link>
-                      <Link to="/found">Found</Link>
-                      <Link to="/report-found">Report Found</Link>
-                      <Link to="/profile">Profile</Link>
-                    </ul>
-            
-                    {/* Sign Out */}
-         <Link to="/login">  
-        <button className="bg-red-500 text-white px-4 py-1 rounded">
-          Sign Out
-        </button>
+      {/* NAVBAR */}
+      <nav className="bg-white/80 backdrop-blur-md shadow flex flex-wrap justify-between items-center px-4 md:px-8 py-2 fixed w-full top-0 z-50">
+
+        <div className="font-bold text-sm md:text-lg">
+          🔍 Digital Lost & Found System
+        </div>
+
+        <ul className="flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm font-semibold mt-2 md:mt-0">
+
+          <NavLink to="/dashboard">Home</NavLink>
+          <NavLink to="/lost">Lost</NavLink>
+          <NavLink to="/report-lost">Report Lost</NavLink>
+          <NavLink to="/found">Found</NavLink>
+          <NavLink to="/report-found">Report Found</NavLink>
+          <NavLink to="/profile">Profile</NavLink>
+
+        </ul>
+
+        <Link to="/login">
+          <button className="bg-red-500 text-white px-4 py-1 rounded">
+            Sign Out
+          </button>
         </Link>
-                  </nav>
 
-    <div className="min-h-[80vh] bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] flex flex-col items-center justify-center">
+      </nav>
 
-      {/* Title */}
-      <h1 className="text-3xl font-bold mb-6">
-        <span className="text-red-800">Report</span>{" "}
-        <span className="text-green-800">Lost Item</span>
-      </h1>
+      {/* PAGE */}
+      <div className="min-h-screen pt-24 bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] flex items-center justify-center px-4">
 
-      {/* Form Box */}
-      <div className="bg-green-200 p-8 rounded-xl shadow-lg w-[450px]">
+        <div className="bg-green-200 p-8 rounded-xl shadow-lg w-full max-w-md">
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            Report Lost Item
+          </h1>
 
-          {/* Name */}
-          <div className="flex items-center justify-between">
-            <label className="font-semibold">Name :</label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+
             <input
               type="text"
               name="name"
+              placeholder="Your Name"
+              value={formData.name}
               onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
+              className="border w-full px-3 py-2 rounded"
+              required
             />
-          </div>
 
-          {/* Item */}
-          <div className="flex items-center justify-between">
-            <label className="font-semibold">Item :</label>
             <input
               type="text"
               name="item"
+              placeholder="Lost Item"
+              value={formData.item}
               onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
+              className="border w-full px-3 py-2 rounded"
+              required
             />
-          </div>
 
-          {/* Location */}
-          <div className="flex items-center justify-between">
-            <label className="font-semibold">Location :</label>
             <select
               name="location"
+              value={formData.location}
               onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
+              className="border w-full px-3 py-2 rounded"
+              required
             >
-              <option>Select Location</option>
+              <option value="">Select Location</option>
               <option>Mumbai Naka</option>
               <option>College Campus</option>
               <option>Bus Stop</option>
               <option>Railway Station</option>
             </select>
-          </div>
 
-          {/* Date */}
-          <div className="flex items-center justify-between">
-            <label className="font-semibold">Date :</label>
             <input
               type="date"
               name="date"
+              value={formData.date}
               onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
+              className="border w-full px-3 py-2 rounded"
+              required
             />
-          </div>
 
-          {/* Description */}
-          <div className="flex items-center justify-between">
-            <label className="font-semibold">Item Description :</label>
             <textarea
               name="description"
+              placeholder="Item Description"
+              value={formData.description}
               onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
-            ></textarea>
-          </div>
+              className="border w-full px-3 py-2 rounded"
+            />
 
-          {/* Upload Photo */}
-          <div className="flex items-center justify-between">
-            <label className="font-semibold">Upload Photo :</label>
             <input
               type="file"
               name="photo"
               onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
+              className="border w-full px-3 py-2 rounded bg-white"
             />
-          </div>
 
-          {/* Buttons */}
-          <div className="flex justify-center gap-4 mt-4">
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
-            >
-              Submit
-            </button>
+            <div className="flex justify-center gap-4">
 
-            <button
-              type="reset"
-              className="bg-gray-400 text-black px-4 py-1 rounded hover:bg-gray-500"
-            >
-              Reset
-            </button>
-          </div>
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-5 py-2 rounded"
+              >
+                Submit
+              </button>
 
-        </form>
+              <button
+                type="reset"
+                className="bg-gray-400 px-5 py-2 rounded"
+              >
+                Reset
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
       </div>
-    </div>
     </>
   );
 }

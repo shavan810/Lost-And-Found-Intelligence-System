@@ -1,152 +1,227 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 function ReportFound() {
-  const [formData, setFormData] = useState({
-    name: "",
-    item: "",
-    location: "",
-    date: "",
-    description: "",
-    photo: null,
+const [formData, setFormData] = useState({
+  name: "",
+  item: "",
+  location: "",
+  date: "",
+  description: "",
+  photo: null,
+});
+
+const handleChange = (e) => {
+  const { name, value, files } = e.target;
+
+  setFormData({
+    ...formData,
+    [name]: files ? files[0] : value,
   });
+};
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({ ...formData, [name]: files ? files[0] : value });
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
+  try {
+
+    const response = await fetch("http://localhost:5000/api/found/report-found", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
     alert("Found Item Reported!");
-  };
+
+  } catch (error) {
+
+    console.error("Error:", error);
+
+  }
+};
 
   return (
-     <>
-     <nav className="bg-white/80 backdrop-blur-md shadow flex justify-between items-center px-8 py-2 fixed w-full top-0 z-50">
-    
-            {/* Logo */}
-            <div className="flex items-center gap-2 font-bold text-lg">
-              🔍 Digital Lost & Found System
-            </div>
-    
-            {/* Menu */}
-            <ul className="flex gap-6 text-sm font-semibold">
-              <Link to="/dashboard" className="bg-green-200 px-3 py-1 rounded">Home</Link>
-              <Link to="/lost">Lost</Link>
-              <Link to="/report-lost">Report Lost</Link>
-              <Link to="/found">Found</Link>
-              <Link to="/report-found">Report Found</Link>
-              <Link to="/profile">Profile</Link>
-            </ul>
-    
-            {/* Sign Out */}
-        <Link to="/login">  
-        <button className="bg-red-500 text-white px-4 py-1 rounded">
-          Sign Out
-        </button>
+    <>
+      {/* NAVBAR */}
+      <nav className="bg-white/80 backdrop-blur-md shadow flex flex-wrap justify-between items-center px-4 md:px-8 py-2 fixed w-full top-0 z-50">
+        <div className="font-bold text-sm md:text-lg">
+          🔍 Digital Lost & Found System
+        </div>
+
+        <ul className="flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm font-semibold mt-2 md:mt-0">
+
+          <NavLink to="/dashboard"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-green-500 text-white px-3 py-1 rounded"
+                : "hover:bg-green-200 px-3 py-1 rounded"}>
+            Home
+          </NavLink>
+
+          <NavLink to="/lost"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-green-500 text-white px-3 py-1 rounded"
+                : "hover:bg-green-200 px-3 py-1 rounded"}>
+            Lost
+          </NavLink>
+
+          <NavLink to="/report-lost"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-green-500 text-white px-3 py-1 rounded"
+                : "hover:bg-green-200 px-3 py-1 rounded"}>
+            Report Lost
+          </NavLink>
+
+          <NavLink to="/found"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-green-500 text-white px-3 py-1 rounded"
+                : "hover:bg-green-200 px-3 py-1 rounded"}>
+            Found
+          </NavLink>
+
+          <NavLink to="/report-found"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-green-500 text-white px-3 py-1 rounded"
+                : "hover:bg-green-200 px-3 py-1 rounded"}>
+            Report Found
+          </NavLink>
+
+          <NavLink to="/profile"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-green-500 text-white px-3 py-1 rounded"
+                : "hover:bg-green-200 px-3 py-1 rounded"}>
+            Profile
+          </NavLink>
+
+        </ul>
+
+        <Link to="/login">
+          <button className="bg-red-500 text-white px-3 md:px-4 py-1 rounded text-xs md:text-sm">
+            Sign Out
+          </button>
         </Link>
-          </nav>
+      </nav>
 
-    <div className="min-h-[80vh] pt-20 bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] flex flex-col items-center justify-center">
 
-      <h1 className="text-3xl font-bold mb-6 text-green-900">
-        Report Found Item
-      </h1>
+      {/* PAGE */}
+      <div className="min-h-screen pt-24 bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] flex items-center justify-center px-4">
 
-      <div className="bg-green-200 p-8 rounded-xl shadow-lg w-[450px]">
+        <div className="bg-green-200 p-6 md:p-8 rounded-xl shadow-lg w-full max-w-md">
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+          <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center text-green-900">
+            Report Found Item
+          </h1>
 
-          {/* Name */}
-          <div className="flex justify-between items-center">
-            <label className="font-semibold">Name :</label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+
+            {/* Name */}
+            <div>
+              <label className="font-semibold text-sm">Name</label>
+              <input
+                type="text"
+                name="name"
+                onChange={handleChange}
+                className="border w-full px-3 py-2 rounded mt-1"
+                required
+              />
+            </div>
+
+            {/* Item */}
+            <div>
+              <label className="font-semibold text-sm">Item</label>
             <input
               type="text"
-              name="name"
-              onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
-            />
-          </div>
-
-          {/* Item */}
-          <div className="flex justify-between items-center">
-            <label className="font-semibold">Item :</label>
-            <select
               name="item"
+              placeholder="Lost Item"
+              value={formData.item}
               onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
-            >
-              <option>Select Item</option>
-              <option>Document</option>
-              <option>Mobile</option>
-              <option>Wallet</option>
-              <option>Bag</option>
-            </select>
-          </div>
-
-          {/* Location */}
-          <div className="flex justify-between items-center">
-            <label className="font-semibold">Location :</label>
-            <select
-              name="location"
-              onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
-            >
-              <option>Select Location</option>
-              <option>Mumbai Naka</option>
-              <option>College Campus</option>
-              <option>Bus Stop</option>
-            </select>
-          </div>
-
-          {/* Date */}
-          <div className="flex justify-between items-center">
-            <label className="font-semibold">Date :</label>
-            <input
-              type="date"
-              name="date"
-              onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
+              className="border w-full px-3 py-2 rounded"
+              required
             />
-          </div>
+            </div>
 
-          {/* Description */}
-          <div className="flex justify-between items-center">
-            <label className="font-semibold">Item Description :</label>
-            <textarea
-              name="description"
-              onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
-            ></textarea>
-          </div>
+            {/* Location */}
+            <div>
+              <label className="font-semibold text-sm">Location</label>
+              <select
+                name="location"
+                onChange={handleChange}
+                className="border w-full px-3 py-2 rounded mt-1"
+                required
+              >
+                <option>Select Location</option>
+                <option>Mumbai Naka</option>
+                <option>College Campus</option>
+                <option>Bus Stop</option>
+              </select>
+            </div>
 
-          {/* Upload */}
-          <div className="flex justify-between items-center">
-            <label className="font-semibold">Upload Photo :</label>
-            <input
-              type="file"
-              name="photo"
-              onChange={handleChange}
-              className="border px-2 py-1 rounded w-[250px]"
-            />
-          </div>
+            {/* Date */}
+            <div>
+              <label className="font-semibold text-sm">Date</label>
+              <input
+                type="date"
+                name="date"
+                onChange={handleChange}
+                className="border w-full px-3 py-2 rounded mt-1"
+                required
+              />
+            </div>
 
-          {/* Buttons */}
-          <div className="flex justify-center gap-4 mt-4">
-            <button className="bg-green-600 text-white px-4 py-1 rounded">
-              Submit
-            </button>
-            <button type="reset" className="bg-gray-400 px-4 py-1 rounded">
-              Reset
-            </button>
-          </div>
+            {/* Description */}
+            <div>
+              <label className="font-semibold text-sm">Item Description</label>
+              <textarea
+                name="description"
+                onChange={handleChange}
+                rows="3"
+                className="border w-full px-3 py-2 rounded mt-1"
+              ></textarea>
+            </div>
 
-        </form>
+            {/* Upload */}
+            <div>
+              <label className="font-semibold text-sm">Upload Photo</label>
+              <input
+                type="file"
+                name="photo"
+                onChange={handleChange}
+                className="border w-full px-3 py-2 rounded mt-1 bg-white"
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-center gap-4 pt-2">
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700"
+              >
+                Submit
+              </button>
+
+              <button
+                type="reset"
+                className="bg-gray-400 px-5 py-2 rounded hover:bg-gray-500"
+              >
+                Reset
+              </button>
+            </div>
+
+          </form>
+        </div>
       </div>
-    </div>
-   </>
+    </>
   );
 }
 
