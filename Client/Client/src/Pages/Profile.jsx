@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, NavLink } from "react-router-dom";
+import Navbar2 from "../Components/Nabar2";
 
 function Profile() {
 
   const [user, setUser] = useState({
-    name: "Shavan Singh",
-    email: "creative.shavan@gmail.com",
-    phone: "7387990810",
-    location: "Nashik",
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
   });
 
   const [editMode, setEditMode] = useState(false);
   const [lostHistory, setLostHistory] = useState([]);
   const [foundHistory, setFoundHistory] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+
+  const userId = localStorage.getItem("userId");
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -25,145 +29,93 @@ function Profile() {
   };
 
   useEffect(() => {
+    fetchUserProfile();
     fetchHistory();
+    fetchNotifications();
   }, []);
 
-const fetchHistory = async () => {
-  try {
+  // USER PROFILE FETCH
+  const fetchUserProfile = async () => {
+    try {
 
-    const userId = localStorage.getItem("userId");
+      const res = await axios.get(
+        `http://localhost:5000/api/auth/user/${userId}`
+      );
 
-    const lostRes = await axios.get(
-      `http://localhost:5000/api/lost/my/${userId}`
-    );
+      setUser(res.data);
 
-    const foundRes = await axios.get(
-      `http://localhost:5000/api/found/my/${userId}`
-    );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    setLostHistory(lostRes.data);
-    setFoundHistory(foundRes.data);
+  // LOST & FOUND HISTORY
+  const fetchHistory = async () => {
+    try {
 
-  } catch (error) {
-    console.log(error);
-  }
-};
+      const lostRes = await axios.get(
+        `http://localhost:5000/api/lost/my/${userId}`
+      );
 
-const [notifications,setNotifications] = useState([]);
+      const foundRes = await axios.get(
+        `http://localhost:5000/api/found/my/${userId}`
+      );
 
-const userId = localStorage.getItem("userId")
+      setLostHistory(lostRes.data);
+      setFoundHistory(foundRes.data);
 
-useEffect(()=>{
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-fetch(`http://localhost:5000/api/notifications/${userId}`)
-.then(res=>res.json())
-.then(data=>setNotifications(data))
+  // NOTIFICATIONS
+  const fetchNotifications = async () => {
 
-},[])
+    try {
+
+      const res = await axios.get(
+        `http://localhost:5000/api/notifications/${userId}`
+      );
+
+      setNotifications(res.data);
+
+    } catch (error) {
+      console.log(error);
+    }
+
+  };
+
   return (
     <>
-    <div>
-
-<h2>Notifications</h2>
-
-{notifications.map((n)=>(
-<div key={n._id}>
-{n.message}
-</div>
-))}
-
-</div>
-
       {/* NAVBAR */}
-      <nav className="bg-white/80 backdrop-blur-md shadow flex flex-wrap justify-between items-center px-4 md:px-8 py-2 fixed w-full top-0 z-50">
-
-        <div className="font-bold text-sm md:text-lg">
-          🔍 Digital Lost & Found System
-        </div>
-
-        <ul className="flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm font-semibold mt-2 md:mt-0">
-
-          <NavLink to="/dashboard" className={({ isActive }) =>
-            isActive
-              ? "bg-green-500 text-white px-3 py-1 rounded"
-              : "hover:bg-green-200 px-3 py-1 rounded"
-          }>
-            Home
-          </NavLink>
-
-          <NavLink to="/lost" className={({ isActive }) =>
-            isActive
-              ? "bg-green-500 text-white px-3 py-1 rounded"
-              : "hover:bg-green-200 px-3 py-1 rounded"
-          }>
-            Lost
-          </NavLink>
-
-          <NavLink to="/report-lost" className={({ isActive }) =>
-            isActive
-              ? "bg-green-500 text-white px-3 py-1 rounded"
-              : "hover:bg-green-200 px-3 py-1 rounded"
-          }>
-            Report Lost
-          </NavLink>
-
-          <NavLink to="/found" className={({ isActive }) =>
-            isActive
-              ? "bg-green-500 text-white px-3 py-1 rounded"
-              : "hover:bg-green-200 px-3 py-1 rounded"
-          }>
-            Found
-          </NavLink>
-
-          <NavLink to="/report-found" className={({ isActive }) =>
-            isActive
-              ? "bg-green-500 text-white px-3 py-1 rounded"
-              : "hover:bg-green-200 px-3 py-1 rounded"
-          }>
-            Report Found
-          </NavLink>
-
-          <NavLink to="/profile" className={({ isActive }) =>
-            isActive
-              ? "bg-green-500 text-white px-3 py-1 rounded"
-              : "hover:bg-green-200 px-3 py-1 rounded"
-          }>
-            Profile
-          </NavLink>
-
-        </ul>
-
-        <Link to="/login">
-          <button className="bg-red-500 text-white px-4 py-1 rounded">
-            Sign Out
-          </button>
-        </Link>
-
-      </nav>
+      <Navbar2/>
 
 
       {/* PAGE */}
-      <div className="min-h-screen pt-24 bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] px-6 md:px-20">
+      <div className="min-h-screen pt-24 bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] px-4 md:px-16">
 
         {/* PROFILE INFO */}
-        <div className="bg-white p-6 rounded-xl shadow mb-10">
+        <div className="bg-white p-5 md:p-8 rounded-xl shadow mb-10">
 
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-green-800">
+          <div className="flex flex-col md:flex-row justify-between md:items-center mb-4">
+
+            <h2 className="text-xl md:text-2xl font-bold text-green-800">
               User Profile
             </h2>
 
             {!editMode && (
               <button
                 onClick={() => setEditMode(true)}
-                className="bg-blue-500 text-white px-4 py-1 rounded"
+                className="bg-blue-500 text-white px-4 py-1 rounded mt-2 md:mt-0"
               >
                 Edit
               </button>
             )}
+
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             <div>
               <label className="font-semibold">Name</label>
@@ -173,7 +125,7 @@ fetch(`http://localhost:5000/api/notifications/${userId}`)
                 value={user.name}
                 disabled={!editMode}
                 onChange={handleChange}
-                className="border w-full px-3 py-1 rounded"
+                className="border w-full px-3 py-2 rounded"
               />
             </div>
 
@@ -185,7 +137,7 @@ fetch(`http://localhost:5000/api/notifications/${userId}`)
                 value={user.email}
                 disabled={!editMode}
                 onChange={handleChange}
-                className="border w-full px-3 py-1 rounded"
+                className="border w-full px-3 py-2 rounded"
               />
             </div>
 
@@ -197,7 +149,7 @@ fetch(`http://localhost:5000/api/notifications/${userId}`)
                 value={user.phone}
                 disabled={!editMode}
                 onChange={handleChange}
-                className="border w-full px-3 py-1 rounded"
+                className="border w-full px-3 py-2 rounded"
               />
             </div>
 
@@ -209,7 +161,7 @@ fetch(`http://localhost:5000/api/notifications/${userId}`)
                 value={user.location}
                 disabled={!editMode}
                 onChange={handleChange}
-                className="border w-full px-3 py-1 rounded"
+                className="border w-full px-3 py-2 rounded"
               />
             </div>
 
@@ -227,68 +179,75 @@ fetch(`http://localhost:5000/api/notifications/${userId}`)
         </div>
 
 
-        {/* LOST HISTORY */}
-        <div className="bg-white p-6 rounded-xl shadow mb-10">
+        {/* NOTIFICATIONS */}
+        <div className="bg-white p-5 md:p-6 rounded-xl shadow mb-10">
 
-          <h2 className="text-xl font-bold text-red-700 mb-4">
+          <h2 className="text-lg md:text-xl font-bold mb-3">
+            Notifications
+          </h2>
+
+          {notifications.length === 0 ? (
+            <p className="text-gray-500">No Notifications</p>
+          ) : (
+            notifications.map((n) => (
+              <div
+                key={n._id}
+                className="border p-2 rounded mb-2 text-sm"
+              >
+                {n.message}
+              </div>
+            ))
+          )}
+
+        </div>
+
+
+        {/* LOST HISTORY */}
+        <div className="bg-white p-5 md:p-6 rounded-xl shadow mb-10">
+
+          <h2 className="text-lg md:text-xl font-bold text-red-700 mb-4">
             Lost Item History
           </h2>
 
-          <div className="space-y-3">
-
-            {lostHistory.length === 0 ? (
-
-              <p className="text-gray-500">No Lost Items Reported</p>
-
-            ) : (
-
-              lostHistory.map((item) => (
-                <div
-                  key={item._id}
-                  className="border p-3 rounded flex justify-between"
-                >
-                  <span>{item.itemName}</span>
-                  <span>{item.location}</span>
-                  <span>{item.date}</span>
-                </div>
-              ))
-
-            )}
-
-          </div>
+          {lostHistory.length === 0 ? (
+            <p className="text-gray-500">No Lost Items Reported</p>
+          ) : (
+            lostHistory.map((item) => (
+              <div
+                key={item._id}
+                className="border p-3 rounded mb-2 flex flex-col md:flex-row md:justify-between text-sm"
+              >
+                <span>{item.itemName}</span>
+                <span>{item.location}</span>
+                <span>{item.date}</span>
+              </div>
+            ))
+          )}
 
         </div>
 
 
         {/* FOUND HISTORY */}
-        <div className="bg-white p-6 rounded-xl shadow">
+        <div className="bg-white p-5 md:p-6 rounded-xl shadow">
 
-          <h2 className="text-xl font-bold text-green-700 mb-4">
+          <h2 className="text-lg md:text-xl font-bold text-green-700 mb-4">
             Found Item History
           </h2>
 
-          <div className="space-y-3">
-
-            {foundHistory.length === 0 ? (
-
-              <p className="text-gray-500">No Found Items Reported</p>
-
-            ) : (
-
-              foundHistory.map((item) => (
-                <div
-                  key={item._id}
-                  className="border p-3 rounded flex justify-between"
-                >
-                  <span>{item.itemName}</span>
-                  <span>{item.location}</span>
-                  <span>{item.date}</span>
-                </div>
-              ))
-
-            )}
-
-          </div>
+          {foundHistory.length === 0 ? (
+            <p className="text-gray-500">No Found Items Reported</p>
+          ) : (
+            foundHistory.map((item) => (
+              <div
+                key={item._id}
+                className="border p-3 rounded mb-2 flex flex-col md:flex-row md:justify-between text-sm"
+              >
+                <span>{item.itemName}</span>
+                <span>{item.location}</span>
+                <span>{item.date}</span>
+              </div>
+            ))
+          )}
 
         </div>
 

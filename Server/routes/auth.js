@@ -2,7 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const transporter = require("../config/mailer"); // ADD THIS
+const transporter = require("../config/mailer");
 
 
 // ================= REGISTER =================
@@ -17,9 +17,14 @@ router.post("/register", async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     const user = new User({
-      name, gender, registerNumber,
-      faculty, phone, username,
-      email, password: hashed
+      name,
+      gender,
+      registerNumber,
+      faculty,
+      phone,
+      username,
+      email,
+      password: hashed
     });
 
     await user.save();
@@ -34,6 +39,7 @@ router.post("/register", async (req, res) => {
 // ================= LOGIN =================
 router.post("/login", async (req, res) => {
   try {
+
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -52,18 +58,38 @@ router.post("/login", async (req, res) => {
 });
 
 
+// ================= GET USER PROFILE =================
+router.get("/user/:id", async (req, res) => {
+  try {
+
+    const user = await User.findById(req.params.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json("User not found");
+    }
+
+    res.json(user);
+
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+
+
 // ================= FORGOT PASSWORD =================
 router.post("/forgot-password", async (req, res) => {
   try {
+
     const { email } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) return res.json("Email not registered");
 
-    const otp = Math.floor(100000 + Math.random()*900000).toString();
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.otp = otp;
-    user.otpExpire = Date.now() + 5*60*1000; // 5 min
+    user.otpExpire = Date.now() + 5 * 60 * 1000;
+
     await user.save();
 
     await transporter.sendMail({
@@ -84,6 +110,7 @@ router.post("/forgot-password", async (req, res) => {
 // ================= VERIFY OTP =================
 router.post("/verify-otp", async (req, res) => {
   try {
+
     const { email, otp } = req.body;
 
     const user = await User.findOne({ email });
@@ -103,11 +130,12 @@ router.post("/verify-otp", async (req, res) => {
 // ================= RESET PASSWORD =================
 router.post("/reset-password", async (req, res) => {
   try {
+
     const { email, newPassword } = req.body;
 
     const user = await User.findOne({ email });
 
-    const hashed = await bcrypt.hash(newPassword,10);
+    const hashed = await bcrypt.hash(newPassword, 10);
 
     user.password = hashed;
     user.otp = null;
@@ -123,69 +151,3 @@ router.post("/reset-password", async (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
-
-
-// const router = require("express").Router();
-// const User = require("../models/User");
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
-
-// // REGISTER
-// router.post("/register", async (req, res) => {
-//   try {
-//     const {
-//       name,
-//       gender,
-//       registerNumber,
-//       faculty,
-//       phone,
-//       username,
-//       email,
-//       password
-//     } = req.body;
-
-//     const hashed = await bcrypt.hash(password, 10);
-
-//     const user = new User({
-//       name,
-//       gender,
-//       registerNumber,
-//       faculty,
-//       phone,
-//       username,
-//       email,
-//       password: hashed
-//     });
-
-//     await user.save();
-//     res.json("User Registered");
-//   } catch (err) {
-//     res.status(500).json(err.message);
-//   }
-// });
-
-
-// // LOGIN
-// router.post("/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(400).json("User not found");
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) return res.status(400).json("Wrong password");
-
-//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-
-//     res.json({ token, user });
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
-
-// module.exports = router;

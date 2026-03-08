@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import Navbar2 from "../Components/Nabar2";
 
 function ReportLost() {
 
@@ -65,31 +66,8 @@ function ReportLost() {
   return (
     <>
       {/* NAVBAR */}
-      <nav className="bg-white/80 backdrop-blur-md shadow flex flex-wrap justify-between items-center px-4 md:px-8 py-2 fixed w-full top-0 z-50">
 
-        <div className="font-bold text-sm md:text-lg">
-          🔍 Digital Lost & Found System
-        </div>
-
-        <ul className="flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm font-semibold mt-2 md:mt-0">
-
-          <NavLink to="/dashboard">Home</NavLink>
-          <NavLink to="/lost">Lost</NavLink>
-          <NavLink to="/report-lost">Report Lost</NavLink>
-          <NavLink to="/found">Found</NavLink>
-          <NavLink to="/report-found">Report Found</NavLink>
-          <NavLink to="/profile">Profile</NavLink>
-
-        </ul>
-
-        <Link to="/login">
-          <button className="bg-red-500 text-white px-4 py-1 rounded">
-            Sign Out
-          </button>
-        </Link>
-
-      </nav>
-
+      <Navbar2/>
       {/* PAGE */}
       <div className="min-h-screen pt-24 bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] flex items-center justify-center px-4">
 

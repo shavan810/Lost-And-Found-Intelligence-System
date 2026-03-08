@@ -1,7 +1,8 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import foundData from "../data/cards";
 import FoundCard from "../components/Card";
 import { Link, NavLink } from "react-router-dom";
+import Navbar2 from "../Components/Nabar2";
 
 function Found() {
   const [search, setSearch] = useState("");
@@ -20,85 +21,8 @@ function Found() {
   return (
     <>
       {/* NAVBAR */}
-      <nav className="bg-white/80 backdrop-blur-md shadow flex flex-wrap justify-between items-center px-4 md:px-8 py-2 fixed w-full top-0 z-50">
-        <div className="font-bold text-sm md:text-lg">
-          🔍 Digital Lost & Found System
-        </div>
 
-        <ul className="flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm font-semibold mt-2 md:mt-0">
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"
-            }
-          >
-            Home
-          </NavLink>
-
-          <NavLink
-            to="/lost"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"
-            }
-          >
-            Lost
-          </NavLink>
-
-          <NavLink
-            to="/report-lost"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"
-            }
-          >
-            Report Lost
-          </NavLink>
-
-          <NavLink
-            to="/found"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"
-            }
-          >
-            Found
-          </NavLink>
-
-          <NavLink
-            to="/report-found"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"
-            }
-          >
-            Report Found
-          </NavLink>
-
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"
-            }
-          >
-            Profile
-          </NavLink>
-        </ul>
-
-        <Link to="/login">
-          <button className="bg-red-500 text-white px-3 md:px-4 py-1 rounded text-xs md:text-sm">
-            Sign Out
-          </button>
-        </Link>
-      </nav>
+      <Navbar2 />
 
       {/* PAGE */}
       <div className="min-h-screen pt-24 bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] px-4 md:px-10">

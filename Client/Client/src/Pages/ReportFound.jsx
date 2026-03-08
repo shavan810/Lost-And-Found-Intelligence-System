@@ -1,130 +1,65 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import Navbar2 from "../Components/Nabar2";
 
 function ReportFound() {
-const [formData, setFormData] = useState({
-  name: "",
-  item: "",
-  location: "",
-  date: "",
-  description: "",
-  photo: null,
-});
-
-const handleChange = (e) => {
-  const { name, value, files } = e.target;
-
-  setFormData({
-    ...formData,
-    [name]: files ? files[0] : value,
+  const [formData, setFormData] = useState({
+    name: "",
+    item: "",
+    location: "",
+    date: "",
+    description: "",
+    photo: null,
   });
-};
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
 
-  try {
-
-    const response = await fetch("http://localhost:5000/api/found/report-found", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
+    setFormData({
+      ...formData,
+      [name]: files ? files[0] : value,
     });
+  };
 
-    const data = await response.json();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    console.log(data);
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/found/report-found",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        },
+      );
 
-    alert("Found Item Reported!");
+      const data = await response.json();
 
-  } catch (error) {
+      console.log(data);
 
-    console.error("Error:", error);
-
-  }
-};
+      alert("Found Item Reported!");
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <>
       {/* NAVBAR */}
-      <nav className="bg-white/80 backdrop-blur-md shadow flex flex-wrap justify-between items-center px-4 md:px-8 py-2 fixed w-full top-0 z-50">
-        <div className="font-bold text-sm md:text-lg">
-          🔍 Digital Lost & Found System
-        </div>
-
-        <ul className="flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm font-semibold mt-2 md:mt-0">
-
-          <NavLink to="/dashboard"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"}>
-            Home
-          </NavLink>
-
-          <NavLink to="/lost"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"}>
-            Lost
-          </NavLink>
-
-          <NavLink to="/report-lost"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"}>
-            Report Lost
-          </NavLink>
-
-          <NavLink to="/found"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"}>
-            Found
-          </NavLink>
-
-          <NavLink to="/report-found"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"}>
-            Report Found
-          </NavLink>
-
-          <NavLink to="/profile"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-green-500 text-white px-3 py-1 rounded"
-                : "hover:bg-green-200 px-3 py-1 rounded"}>
-            Profile
-          </NavLink>
-
-        </ul>
-
-        <Link to="/login">
-          <button className="bg-red-500 text-white px-3 md:px-4 py-1 rounded text-xs md:text-sm">
-            Sign Out
-          </button>
-        </Link>
-      </nav>
 
 
+      <Navbar2 />
       {/* PAGE */}
       <div className="min-h-screen pt-24 bg-gradient-to-r from-[#b9e3a6] to-[#5fa89e] flex items-center justify-center px-4">
-
         <div className="bg-green-200 p-6 md:p-8 rounded-xl shadow-lg w-full max-w-md">
-
           <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center text-green-900">
             Report Found Item
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-
             {/* Name */}
             <div>
               <label className="font-semibold text-sm">Name</label>
@@ -140,15 +75,15 @@ const handleSubmit = async (e) => {
             {/* Item */}
             <div>
               <label className="font-semibold text-sm">Item</label>
-            <input
-              type="text"
-              name="item"
-              placeholder="Lost Item"
-              value={formData.item}
-              onChange={handleChange}
-              className="border w-full px-3 py-2 rounded"
-              required
-            />
+              <input
+                type="text"
+                name="item"
+                placeholder="Lost Item"
+                value={formData.item}
+                onChange={handleChange}
+                className="border w-full px-3 py-2 rounded"
+                required
+              />
             </div>
 
             {/* Location */}
@@ -217,7 +152,6 @@ const handleSubmit = async (e) => {
                 Reset
               </button>
             </div>
-
           </form>
         </div>
       </div>
